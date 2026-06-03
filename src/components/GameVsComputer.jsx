@@ -6,6 +6,8 @@ import { vsComputerReward } from '../lib/points.js';
 import { awardVsComputer } from '../lib/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { playSound } from '../lib/sound.js';
+import { burstConfetti } from '../lib/confetti.js';
 
 const HUMAN = 'X';
 const AI = 'O';
@@ -34,6 +36,14 @@ export default function GameVsComputer({ isGuest, onGuestPoints, onBack }) {
       settledRef.current = true;
       const key = outcome === HUMAN ? 'win' : outcome === AI ? 'loss' : 'draw';
       setScore((s) => ({ ...s, [key]: s[key] + 1 }));
+      if (key === 'win') {
+        playSound('win');
+        burstConfetti();
+      } else if (key === 'loss') {
+        playSound('lose');
+      } else {
+        playSound('draw');
+      }
       const reward = vsComputerReward(key);
       setAwarded(reward);
       if (isGuest) {
@@ -67,6 +77,7 @@ export default function GameVsComputer({ isGuest, onGuestPoints, onBack }) {
         if (move == null) return prev;
         const next = prev.slice();
         next[move] = AI;
+        playSound('placeO');
         return next;
       });
       setTurn(HUMAN);
@@ -78,6 +89,7 @@ export default function GameVsComputer({ isGuest, onGuestPoints, onBack }) {
     if (board[i] || result || turn !== HUMAN) return;
     const next = board.slice();
     next[i] = HUMAN;
+    playSound('place');
     setBoard(next);
     if (!gameResult(next)) setTurn(AI);
   };

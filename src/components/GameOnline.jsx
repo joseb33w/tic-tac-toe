@@ -5,6 +5,8 @@ import { calculateWinner } from '../lib/game.js';
 import { fetchGame, makeOnlineMove, subscribeToGame } from '../lib/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { playSound } from '../lib/sound.js';
+import { burstConfetti } from '../lib/confetti.js';
 
 export default function GameOnline({ game: initialGame, onExit }) {
   const { user, refreshProfile } = useAuth();
@@ -27,9 +29,17 @@ export default function GameOnline({ game: initialGame, onExit }) {
   useEffect(() => {
     if (game.status === 'finished' && !settledRef.current) {
       settledRef.current = true;
+      if (game.winner === 'draw') {
+        playSound('draw');
+      } else if (game.winner === myMark) {
+        playSound('win');
+        burstConfetti();
+      } else {
+        playSound('lose');
+      }
       refreshProfile();
     }
-  }, [game.status, refreshProfile]);
+  }, [game.status, game.winner, myMark, refreshProfile]);
 
   const myTurn = game.status === 'active' && game.current_turn === myMark;
 
@@ -38,6 +48,7 @@ export default function GameOnline({ game: initialGame, onExit }) {
     setSending(true);
     try {
       const updated = await makeOnlineMove(game.id, i);
+      playSound(myMark === 'X' ? 'place' : 'placeO');
       setGame(updated);
     } catch (err) {
       toast(/turn/i.test(err.message) ? "It's not your turn yet." : 'Move failed.', 'bad');

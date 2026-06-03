@@ -3,6 +3,8 @@ import { SOUVENIRS } from '../lib/store.js';
 import { buySouvenir, fetchPurchases } from '../lib/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { playSound } from '../lib/sound.js';
+import { burstConfetti } from '../lib/confetti.js';
 import Modal from './Modal.jsx';
 
 export default function Store({ isGuest, onSignInPrompt }) {
@@ -36,9 +38,12 @@ export default function Store({ isGuest, onSignInPrompt }) {
       if (updated) {
         setOwned((prev) => new Set(prev).add(item.id));
         setJustBought(item);
+        playSound('buy');
+        burstConfetti(90);
         await refreshProfile();
       }
     } catch (err) {
+      playSound('error');
       const msg = /insufficient/i.test(err.message)
         ? 'Not enough points yet — win a few more games!'
         : /already/i.test(err.message)

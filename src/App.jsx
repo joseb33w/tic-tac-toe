@@ -88,7 +88,9 @@ export default function App() {
           </button>
         </div>
       )}
-      {content}
+      <div className="view" key={view}>
+        {content}
+      </div>
       <BottomNav view={view} onNavigate={navigate} />
     </div>
   );

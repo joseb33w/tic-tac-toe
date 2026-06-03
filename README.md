@@ -9,6 +9,9 @@ A neon-themed tic-tac-toe game built with **Vite + React + Supabase**.
 - ⭐ **Points** — earn points for every game. Win more, earn more.
 - 🛍️ **Souvenir Store** — spend points on 10 collectible souvenirs.
 - 🏆 **Leaderboard** — see who rules the arcade.
+- ✨ **Animated & interactive** — X/O marks draw themselves as glowing SVG strokes,
+  a strike line sweeps across the winning row, wins burst confetti, and synthesized
+  arcade sound effects (toggle in the header) play on every move, win, and purchase.
 
 You can play the computer as a **guest** with no account. Sign in (email + password)
 to save points, shop the store, and play online.
@@ -22,7 +25,9 @@ to save points, shop the store, and play online.
 
 ## Tech
 
-- **Frontend:** Vite, React 18, plain CSS (no UI framework).
+- **Frontend:** Vite, React 18, plain CSS (no UI framework). Marks, confetti
+  (`src/lib/confetti.js`) and sound effects (`src/lib/sound.js`) are all hand-rolled
+  with zero extra dependencies.
 - **Backend:** Supabase — email/password Auth, Postgres with Row Level Security,
   `SECURITY DEFINER` RPCs for all point/score/store mutations (so points can't be
   tampered with from the client), and Realtime for live multiplayer.

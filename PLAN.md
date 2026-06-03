@@ -37,3 +37,36 @@ RPCs, Realtime), matching the conventions of the user's other Gogi app.
 - Rematch inside an online game (players return to the lobby to start a new match).
 - In-app username editing after signup (a `set_username` RPC exists; no UI yet).
 - Spectating other players' live games.
+
+---
+
+# Session: backend verification + creative/interactive UI
+
+## Goal
+Verify the Supabase backend works end-to-end, and make the UI more creative and
+interactive.
+
+## Backend verification
+- Applied `0001_init.sql` to the shared Supabase project (idempotent) and reloaded
+  the PostgREST schema cache.
+- Drove every RPC + RLS path with real authenticated users (create / join / move /
+  settle online games, `award_vs_computer`, `buy_souvenir`, `ensure_profile`,
+  `set_username`), plus negative cases (wrong turn, square taken, already owned,
+  insufficient points, cross-user purchase reads, direct point tampering). All
+  passed; all test users + rows cleaned up afterward.
+
+## Creative / interactive UI changes
+- `src/components/Square.jsx` — X/O rendered as self-drawing glowing SVG strokes.
+- `src/components/Board.jsx` — animated winning-line strike overlay.
+- `src/lib/confetti.js` (new) — dependency-free canvas confetti burst on wins/buys.
+- `src/lib/sound.js` (new) — Web Audio arcade SFX with a persisted mute toggle.
+- `src/components/Header.jsx` — sound toggle + points pill that pulses on gain.
+- `src/components/Home.jsx` — floating background marks + shimmering title.
+- `GameVsComputer`, `GameOnline`, `Store`, `BottomNav`, `App` — wired sound,
+  confetti, and per-view entrance animations.
+- `src/index.css` — mark-draw, strike, confetti origin, hover sheen, modal/emoji
+  pop, reduced-motion fallbacks.
+
+## Out of scope (this session)
+- Disabling email confirmation (project-level auth config; requires dashboard).
+- Background music / volume slider (kept to lightweight one-shot SFX).
